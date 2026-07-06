@@ -12,7 +12,7 @@ This project implements a digital combination lock using a Mealy FSM.
 The system accepts one 2-bit input per clock cycle and unlocks only
 when the correct 4-step sequence is entered in order. Any wrong key
 press at any state resets the FSM to S0 and increments an attempt
-counter. After 3 wrong key presses the system locks and ignores
+counter (named as k). After 3 wrong key presses the system locks and ignores
 all inputs until an external reset is applied.
 
 ---
@@ -76,7 +76,7 @@ S0 --[in=10]--> S1 --[in=00]--> S2 --[in=01]--> S3 --[in=11 / un=1]--> S0
   simultaneously. This eliminates the need for a separate
   UNLOCK state, reducing total state count from **5 to 4**.
 
-- **Attempt counter counts wrong key presses, not wrong
+- **Attempt counter(k) counts wrong key presses, not wrong
   full sequences** — any single wrong key at any state
   increments the counter. This is stricter than
   sequence-level lockout and more realistic for a
@@ -85,11 +85,6 @@ S0 --[in=10]--> S1 --[in=00]--> S2 --[in=01]--> S3 --[in=11 / un=1]--> S0
 - **Asynchronous reset** — `always @(posedge clk or posedge rst)`
   ensures the system can be reset at any time independent
   of clock state. Critical for safety in lock designs.
-
-- **Lock guard using `if(!lock)`** — once locked, the case
-  statement is bypassed entirely. The `attempt>=3` check
-  catches the transition cycle and `if(!lock)` prevents
-  any further state changes after lockout.
 
 - **2-bit input width** — gives 4 possible values per step
   (`00`, `01`, `10`, `11`), making the password space
