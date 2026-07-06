@@ -1,0 +1,109 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 05.07.2026 13:13:56
+// Design Name: 
+// Module Name: passw_tb
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+
+module passw_tb;
+
+reg clk, rst;
+reg [1:0] in;
+wire un, lock;
+
+passw uut(
+    .clk(clk),
+    .rst(rst),
+    .in(in),
+    .un(un),
+    .lock(lock)
+);
+
+always #5 clk = ~clk;
+
+initial $monitor("Time=%0t | in=%b | un=%b | lock=%b",
+                  $time, in, un, lock);
+
+initial begin
+    clk = 0;
+    rst = 1;
+    in  = 2'b00;
+    #30 rst = 0;
+    //testing 3 wrong keys 
+   @(posedge clk); #10 in=2'b11;
+   @(posedge clk); #10 in=2'b10;
+   @(posedge clk); #10 in=2'b01;
+    #40;
+    
+    if(lock==1'b1)
+    $display("pass: lock after 3 wrong keys");
+    else
+    $display("fail: should be locked");
+    
+    //correct input when locked
+    @(posedge clk); #10 in=2'b10;
+    @(posedge clk); #10 in=2'b0;
+    @(posedge clk); #10 in=2'b01;
+    @(posedge clk); #10 in=2'b11;
+    #10;
+    if(un==1'b1)
+    $display("fail: it should ignore inputs");
+    else
+    $display("pass: ignored inputs when locked");
+
+    //reset clears lock
+    @(posedge clk);#10 rst=1;
+    @(posedge clk);#10 rst=0;
+    #10;
+    if(lock==1'b0)
+    $display("pass: reset cleared lock");
+    else
+    $display("fail: lock should be cleared");
+    
+    //testing correct password
+    @(posedge clk);#10 in=2'b10;
+    @(posedge clk);#10 in=2'b00;
+    @(posedge clk);#10 in=2'b01;
+    @(posedge clk);#10 in=2'b11;
+    #10 ;
+    if(un==1'b1)
+    $display("pass: unlocked");
+    else
+    $display("fail");
+    // wrong key in middle
+    #10 rst=1;#10 rst=0;
+    @(posedge clk);#10 in=2'b10;
+    @(posedge clk);#10 in=2'b00;
+    @(posedge clk);#10 in=2'b10;
+    @(posedge clk);#10 in=2'b10;
+    @(posedge clk);#10 in=2'b00;
+    @(posedge clk);#10 in=2'b01;
+    @(posedge clk);#10 in=2'b11;
+    #10;
+    if(un==1'b1)
+    $display("pass");
+    else
+    $display("fail");
+       
+    #10;
+    $finish;
+end
+
+
+endmodule

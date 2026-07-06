@@ -1,0 +1,86 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 02.07.2026 16:13:45
+// Design Name: 
+// Module Name: passw
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module passw(input clk, rst,[1:0]in,output reg un,lock);
+parameter s0=2'b00;
+parameter s1=2'b01;
+parameter s2=2'b10;
+parameter s3=2'b11;
+reg [1:0]k;
+reg [1:0]s;
+always@(posedge clk or posedge rst)
+begin
+    if(rst)
+    begin
+    un<=1'b0;
+    lock<=1'b0;
+    k<=2'b00;
+    end
+    else if( k>=2'd3)
+    begin
+    s<=s0;
+    lock<=1'b1;
+    end
+    else
+    begin
+    case(s)
+    s0: if(in==2'b10)
+        s<=s1;
+        else
+        begin
+        lock<=1'b0;
+        un<=1'b0;
+        s<=s0;
+        k<=k+1;
+        end
+    s1: if(in==2'b00)
+        s<=s2;
+        else
+        begin
+        s<=s0;
+        k<=k+1;
+        end
+     s2: if(in==2'b01)
+        s<=s3;
+        else
+        begin
+        s<=s0;
+        k<=k+1;
+        end
+      s3: 
+        if (in==2'b11)
+        begin
+        un<=1;
+        k<=2'b00;
+        s<=s0;
+        end
+        else
+        begin
+        k<=k+1;
+        s<=s0;
+        end
+       default:s<=s0;
+       
+       endcase
+       end
+     end
+endmodule
