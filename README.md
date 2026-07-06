@@ -1,4 +1,4 @@
-# Digital Lock System — Mealy FSM-based Password Detection
+## Digital Lock System — Mealy FSM-based Password Detection
 
 A Mealy Finite State Machine implemented in Verilog that detects
 a 4-step 2-bit password sequence and locks permanently after
