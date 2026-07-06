@@ -137,14 +137,3 @@ S0 --[in=10]--> S1 --[in=00]--> S2 --[in=01]--> S3 --[in=11 / un=1]--> S0
 
 - Asynchronous reset priority in always blocks and why
   it matters for safety-critical designs.
-
----
-
-## Part of My Embedded Systems + FPGA Learning Roadmap
-
-Project 3 in a progressive Verilog digital design series.
-
-[Traffic Light Controller](your-link-here) →
-[Sequence Detector 1011](your-link-here) →
-**Digital Lock System** ← current →
-4-bit ALU → UART Transmitter → FIFO Buffer
